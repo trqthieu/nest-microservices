@@ -29,7 +29,9 @@ export class Post {
   @ManyToOne(() => Category, (category) => category.posts)
   category: Category;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @OneToMany(() => Report, (report) => report.post)

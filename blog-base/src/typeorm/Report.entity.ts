@@ -15,10 +15,14 @@ export class Report {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Post, (post) => post.reports)
+  @ManyToOne(() => Post, (post) => post.reports, {
+    onDelete: 'CASCADE',
+  })
   post: Post;
 
-  @ManyToOne(() => User, (user) => user.reports)
+  @ManyToOne(() => User, (user) => user.reports, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Column({

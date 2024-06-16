@@ -38,7 +38,7 @@ export class PostsService {
   }
 
   async findAll(query: GetPostDto) {
-    const { title, categoryId } = query;
+    const { title, categoryId, userId } = query;
     const queryBuilder = this.PostRepository.createQueryBuilder('post')
       .leftJoinAndSelect('post.category', 'category')
       .leftJoinAndSelect('post.user', 'user');
@@ -48,6 +48,10 @@ export class PostsService {
 
     if (categoryId) {
       queryBuilder.andWhere('category.id = :categoryId', { categoryId });
+    }
+
+    if (categoryId) {
+      queryBuilder.andWhere('user.id = :userId', { userId });
     }
 
     return await queryBuilder.getMany();
