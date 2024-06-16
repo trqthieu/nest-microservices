@@ -6,9 +6,10 @@ import { UsersService } from 'src/users/users.service';
 import { IUserRequest } from 'src/users/user.decorator';
 import { Post } from 'src/typeorm/Post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { log } from 'console';
 import { Report } from 'src/typeorm/Report.entity';
+import { GetPostDto } from './dto/get-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -36,13 +37,26 @@ export class PostsService {
     return await this.PostRepository.save(post);
   }
 
-  async findAll() {
-    return await this.PostRepository.find({
-      relations: {
-        category: true,
-        user: true,
-      },
-    });
+  async findAll(query: GetPostDto) {
+    const { title, categoryId } = query;
+    const queryBuilder = this.PostRepository.createQueryBuilder('post')
+      .leftJoinAndSelect('post.category', 'category')
+      .leftJoinAndSelect('post.user', 'user');
+    if (title) {
+      queryBuilder.andWhere('post.title LIKE :title', { title: `%${title}%` });
+    }
+
+    if (categoryId) {
+      queryBuilder.andWhere('category.id = :categoryId', { categoryId });
+    }
+
+    return await queryBuilder.getMany();
+    // return await this.PostRepository.find({
+    //   relations: {
+    //     category: true,
+    //     user: true,
+    //   },
+    // });
   }
 
   async findOne(id: number) {
@@ -122,5 +136,13 @@ export class PostsService {
       throw new BadRequestException('Post not found');
     }
     return await this.PostRepository.remove(post);
+  }
+
+  async getOutstandingPosts() {
+    const posts = await this.PostRepository.createQueryBuilder('post')
+      .orderBy('post.readCount', 'DESC')
+      .getMany();
+
+    return posts;
   }
 }

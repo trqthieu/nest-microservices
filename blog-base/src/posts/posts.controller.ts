@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -13,6 +14,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { IUserRequest, UserRequest } from 'src/users/user.decorator';
 import { CreateReportDto } from './dto/create-report.dto';
+import { GetPostDto } from './dto/get-post.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -29,8 +31,8 @@ export class PostsController {
   }
 
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(@Query() query: GetPostDto) {
+    return this.postsService.findAll(query);
   }
 
   @Get(':id')
@@ -61,4 +63,9 @@ export class PostsController {
   remove(@Param('id') id: string) {
     return this.postsService.remove(+id);
   }
+
+  // @Get('outstanding')
+  // async getOutstandingPosts() {
+  //   return await this.postsService.getOutstandingPosts();
+  // }
 }

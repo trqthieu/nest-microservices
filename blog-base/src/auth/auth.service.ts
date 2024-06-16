@@ -88,7 +88,6 @@ export class AuthService {
     newUser.fullName = fullName;
     newUser.description = description;
     newUser.password = hash;
-    newUser.confirm = false;
     const response = await this.userRepository.save(newUser);
     const token = this.jwtService.sign({
       id: response.id,
