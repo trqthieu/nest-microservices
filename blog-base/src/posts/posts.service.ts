@@ -50,7 +50,7 @@ export class PostsService {
       queryBuilder.andWhere('category.id = :categoryId', { categoryId });
     }
 
-    if (categoryId) {
+    if (userId) {
       queryBuilder.andWhere('user.id = :userId', { userId });
     }
 
